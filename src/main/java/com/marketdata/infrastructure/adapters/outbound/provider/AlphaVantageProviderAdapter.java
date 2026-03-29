@@ -18,6 +18,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,7 +56,7 @@ public class AlphaVantageProviderAdapter implements MarketDataProviderPortOut {
     }
 
     @Override
-    public List<Price> getHistoricalPrices(String ticker, LocalDate from, LocalDate to) {
+    public List<Price> getHistoricalPrices(String ticker, LocalDateTime from, LocalDateTime to) {
         log.info("Fetching historical prices for {} from {} to {}", ticker, from, to);
 
         String formattedTicker = ticker.endsWith(".SA") ? ticker : ticker + ".SA";
@@ -146,7 +147,7 @@ public class AlphaVantageProviderAdapter implements MarketDataProviderPortOut {
 
         BigDecimal closePrice = new BigDecimal(quote.getString("05. price"));
         Long volume = quote.optLong("06. volume");
-        LocalDate date = LocalDate.parse(quote.getString("07. latest trading day"));
+        LocalDateTime date = LocalDate.parse(quote.getString("07. latest trading day")).atStartOfDay();
 
         return new Price(null, null, date, closePrice, volume);
     }
@@ -154,8 +155,8 @@ public class AlphaVantageProviderAdapter implements MarketDataProviderPortOut {
     private List<Price> mapHistoricalToDomain(
             String ticker,
             String body,
-            LocalDate from,
-            LocalDate to
+            LocalDateTime from,
+            LocalDateTime to
     ) {
         try {
             JSONObject json = new JSONObject(body);
@@ -167,10 +168,10 @@ public class AlphaVantageProviderAdapter implements MarketDataProviderPortOut {
             JSONObject timeSeries = json.getJSONObject("Time Series (Daily)");
 
             return timeSeries.keySet().stream()
-                    .map(LocalDate::parse)
+                    .map(dateStr -> LocalDate.parse(dateStr).atStartOfDay())
                     .filter(date -> !date.isBefore(from) && !date.isAfter(to))
                     .map(date -> {
-                        JSONObject daily = timeSeries.getJSONObject(date.toString());
+                        JSONObject daily = timeSeries.getJSONObject(date.toLocalDate().toString());
 
                         BigDecimal close = new BigDecimal(daily.getString("4. close"));
                         Long volume = daily.optLong("5. volume");

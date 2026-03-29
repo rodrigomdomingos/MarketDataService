@@ -10,7 +10,7 @@ import com.marketdata.application.ports.out.PriceRepositoryPortOut;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +23,7 @@ public class PriceRepositoryImpl implements PriceRepositoryPortOut {
     private final PriceEntityMapper priceEntityMapper;
 
     @Override
-    public List<Price> findByStockAndDateRange(String ticker, LocalDate from, LocalDate to) {
+    public List<Price> findByStockAndDateRange(String ticker, LocalDateTime from, LocalDateTime to) {
         return jpaPriceRepository
                 .findByStock_TickerIgnoreCaseAndDateBetweenOrderByDateAsc(ticker, from, to)
                 .stream()

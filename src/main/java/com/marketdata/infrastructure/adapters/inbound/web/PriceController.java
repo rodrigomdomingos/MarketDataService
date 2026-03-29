@@ -4,6 +4,7 @@ import com.marketdata.infrastructure.adapters.inbound.web.dto.PriceResponse;
 import com.marketdata.infrastructure.adapters.inbound.web.mapper.WebMapper;
 import com.marketdata.application.ports.in.PriceUseCase;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -24,8 +25,8 @@ public class PriceController {
     @GetMapping("/{ticker}")
     public List<PriceResponse> getPrices(
             @PathVariable String ticker,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime to
     ) {
         return priceUseCase.getPrices(ticker, from, to).stream()
                 .map(webMapper::toResponse)

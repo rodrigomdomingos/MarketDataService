@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,18 +32,18 @@ class PriceUseCaseTest {
     void getPrices_returns_expected_prices() {
         // Given
         String ticker = "AAPL";
-        LocalDate from = LocalDate.of(2023, 1, 1);
-        LocalDate to = LocalDate.of(2023, 12, 31);
+        LocalDateTime from = LocalDateTime.of(2023, 1, 1, 0, 0);
+        LocalDateTime to = LocalDateTime.of(2023, 12, 31, 0, 0);
 
         List<Price> expectedPrices = List.of(
             Price.builder()
                 .stockId(1L)
-                .date(LocalDate.of(2023, 1, 2))
+                .date(LocalDateTime.of(2023, 1, 2, 0, 0))
                 .closePrice(new BigDecimal("150.00"))
                 .build(),
             Price.builder()
                 .stockId(1L)
-                .date(LocalDate.of(2023, 2, 1))
+                .date(LocalDateTime.of(2023, 2, 1, 0, 0))
                 .closePrice(new BigDecimal("155.00"))
                 .build()
         );
@@ -66,7 +67,7 @@ class PriceUseCaseTest {
         String ticker = "GOOGL";
         Price expectedPrice = Price.builder()
             .stockId(2L)
-            .date(LocalDate.of(2023, 12, 31))
+            .date(LocalDateTime.of(2023, 12, 31, 0, 0))
             .closePrice(new BigDecimal("2800.00"))
             .build();
 
@@ -86,8 +87,8 @@ class PriceUseCaseTest {
     void getPrices_returns_empty_list_when_no_prices_found() {
         // Given
         String ticker = "MSFT";
-        LocalDate from = LocalDate.of(2023, 1, 1);
-        LocalDate to = LocalDate.of(2023, 12, 31);
+        LocalDateTime from = LocalDateTime.of(2023, 1, 1, 0, 0);
+        LocalDateTime to = LocalDateTime.of(2023, 12, 31, 0, 0);
 
         // When
         when(priceUseCase.getPrices(ticker, from, to)).thenReturn(List.of());
@@ -119,8 +120,8 @@ class PriceUseCaseTest {
     void getPrices_with_invalid_ticker_returns_empty_list() {
         // Given
         String invalidTicker = "INVALID";
-        LocalDate from = LocalDate.of(2023, 1, 1);
-        LocalDate to = LocalDate.of(2023, 12, 31);
+        LocalDateTime from = LocalDateTime.of(2023, 1, 1, 0, 0);
+        LocalDateTime to = LocalDateTime.of(2023, 12, 31, 0, 0);
 
         // When
         when(priceUseCase.getPrices(invalidTicker, from, to)).thenReturn(List.of());
@@ -149,8 +150,8 @@ class PriceUseCaseTest {
     void getPrices_with_null_ticker_returns_empty_list() {
         // Given
         String nullTicker = null;
-        LocalDate from = LocalDate.of(2023, 1, 1);
-        LocalDate to = LocalDate.of(2023, 12, 31);
+        LocalDateTime from = LocalDateTime.of(2023, 1, 1, 0, 0);
+        LocalDateTime to = LocalDateTime.of(2023, 12, 31, 0, 0);
 
         // When
         when(priceUseCase.getPrices(nullTicker, from, to)).thenReturn(List.of());

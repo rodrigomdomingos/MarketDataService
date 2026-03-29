@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,7 +48,7 @@ public class SyncMarketDataUseCaseImpl implements SyncMarketDataUseCase {
     }
 
     @Override
-    public void syncHistoricalPrices(String ticker, LocalDate from, LocalDate to) {
+    public void syncHistoricalPrices(String ticker, LocalDateTime from, LocalDateTime to) {
         log.info("Syncing historical prices for {} from {} to {}", ticker, from, to);
 
         Stock stock = stockRepositoryPort.findByTicker(ticker)

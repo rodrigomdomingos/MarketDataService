@@ -1,20 +1,20 @@
 package com.marketdata.domain.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Price {
     private Long id;
     private Long stockId;
-    private LocalDate date;
+    private LocalDateTime date;
     private BigDecimal closePrice;
     private Long volume;
 
     public Price() {
     }
 
-    public Price(Long id, Long stockId, LocalDate date, BigDecimal closePrice, Long volume) {
+    public Price(Long id, Long stockId, LocalDateTime date, BigDecimal closePrice, Long volume) {
         this.id = id;
         this.stockId = stockId;
         this.date = date;
@@ -38,11 +38,11 @@ public class Price {
         this.stockId = stockId;
     }
 
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -102,7 +102,7 @@ public class Price {
     public static class Builder {
         private Long id;
         private Long stockId;
-        private LocalDate date;
+        private LocalDateTime date;
         private BigDecimal closePrice;
         private Long volume;
 
@@ -116,7 +116,7 @@ public class Price {
             return this;
         }
 
-        public Builder date(LocalDate date) {
+        public Builder date(LocalDateTime date) {
             this.date = date;
             return this;
         }
