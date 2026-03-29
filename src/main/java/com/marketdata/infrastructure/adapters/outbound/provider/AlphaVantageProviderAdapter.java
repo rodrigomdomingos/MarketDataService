@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -30,6 +33,11 @@ public class AlphaVantageProviderAdapter implements MarketDataProviderPortOut {
     private String apiKey;
 
     @Override
+    @Retryable(
+            value = { Exception.class },
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 5000)
+    )
     public Optional<Price> getLatestPrice(String ticker) {
         try {
             String body = fetchPriceJson(ticker);
@@ -38,6 +46,12 @@ public class AlphaVantageProviderAdapter implements MarketDataProviderPortOut {
             log.error("Failed to fetch latest price for {}", ticker, e);
             return Optional.empty();
         }
+    }
+
+    @Recover
+    public Optional<Price> recover(Exception e, String ticker) {
+        log.error("All retry attempts failed for ticker {}. Returning empty.", ticker, e);
+        return Optional.empty();
     }
 
     @Override

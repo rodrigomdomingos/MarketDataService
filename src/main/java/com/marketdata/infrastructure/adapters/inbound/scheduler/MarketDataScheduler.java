@@ -1,5 +1,6 @@
-package com.marketdata.infrastructure.adapters.inbound.batch;
+package com.marketdata.infrastructure.adapters.inbound.scheduler;
 
+import com.google.common.util.concurrent.RateLimiter;
 import com.marketdata.application.ports.in.StockUseCase;
 import com.marketdata.application.ports.in.SyncMarketDataUseCase;
 import com.marketdata.domain.model.Stock;
@@ -18,7 +19,9 @@ public class MarketDataScheduler {
     private final SyncMarketDataUseCase syncMarketDataUseCase;
     private final StockUseCase stockUseCase;
 
-    @Scheduled(cron = "0 * * * * *")
+    private final RateLimiter rateLimiter = RateLimiter.create(5.0 / 60.0);
+
+    @Scheduled(cron = "0 0 9 * * *")
     public void syncLatestPrices() {
         log.info("Starting scheduled sync for latest prices");
 
@@ -26,10 +29,9 @@ public class MarketDataScheduler {
             List<Stock> stocks = stockUseCase.getAllStocks();
 
             for (Stock stock : stocks) {
+                rateLimiter.acquire();
                 try {
                     syncMarketDataUseCase.syncLatestPrice(stock.getTicker());
-                    Thread.sleep(10000);
-
                 } catch (Exception e) {
                     log.error("Failed to sync ticker {}", stock.getTicker(), e);
                 }
