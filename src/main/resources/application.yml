@@ -9,11 +9,15 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
     open-in-view: false
 
 logging:
   level:
-    org.hibernate.SQL: debug
+    root: WARN
+    com.marketdata: INFO
+
+marketdata:
+  provider:
+    alpha-vantage:
+      base-url: https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=
+      api-key: ${ALPHAVANTAGE_API_KEY}

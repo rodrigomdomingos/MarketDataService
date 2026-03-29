@@ -1,0 +1,174 @@
+package com.marketdata.infrastructure.adapters.outbound.provider;
+
+import com.marketdata.application.ports.out.MarketDataProviderPortOut;
+import com.marketdata.domain.model.Price;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class AlphaVantageProviderAdapter implements MarketDataProviderPortOut {
+
+    @Value("${marketdata.provider.alpha-vantage.base-url}")
+    private String baseUrl;
+
+    @Value("${marketdata.provider.alpha-vantage.api-key}")
+    private String apiKey;
+
+    @Override
+    public Optional<Price> getLatestPrice(String ticker) {
+        try {
+            String body = fetchPriceJson(ticker);
+            return Optional.of(mapToDomain(ticker, body));
+        } catch (Exception e) {
+            log.error("Failed to fetch latest price for {}", ticker, e);
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<Price> getHistoricalPrices(String ticker, LocalDate from, LocalDate to) {
+        log.info("Fetching historical prices for {} from {} to {}", ticker, from, to);
+
+        String formattedTicker = ticker.endsWith(".SA") ? ticker : ticker + ".SA";
+
+        String url = baseUrl +
+                "function=TIME_SERIES_DAILY&symbol=" + formattedTicker +
+                "&apikey=" + apiKey;
+
+        String body = fetchRawJson(url);
+        return mapHistoricalToDomain(ticker, body, from, to);
+    }
+
+    private String fetchPriceJson(String ticker) {
+        String formattedTicker = ticker.endsWith(".SA") ? ticker : ticker + ".SA";
+        String url = baseUrl + formattedTicker + "&apikey=" + apiKey;
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .GET()
+                .build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            log.info("AlphaVantage response status for {}: {}, body: {}", ticker, response.statusCode(), response.body());
+
+            String body = response.body();
+
+            if (body == null || body.isBlank()) {
+                throw new RuntimeException("Empty response from AlphaVantage");
+            }
+
+            if (!body.trim().startsWith("{")) {
+                throw new RuntimeException("Invalid JSON response: " + body.substring(0, Math.min(100, body.length())));
+            }
+
+            return body;
+
+        } catch (IOException | InterruptedException e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            throw new RuntimeException("HTTP request failed for ticker " + ticker, e);
+        }
+    }
+
+    private String fetchRawJson(String url) {
+        HttpClient client = HttpClient.newHttpClient();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .GET()
+                .build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            String body = response.body();
+
+            if (body == null || body.isBlank()) {
+                throw new RuntimeException("Empty response from AlphaVantage");
+            }
+
+            return body;
+
+        } catch (IOException | InterruptedException e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            throw new RuntimeException("HTTP request failed", e);
+        }
+    }
+
+    private Price mapToDomain(String ticker, String body) {
+        JSONObject json = new JSONObject(body);
+
+        if (json.has("Note") || json.has("Error Message")) {
+            log.warn("AlphaVantage API limit/error for {}: {}", ticker, body);
+            throw new IllegalStateException("API error"); // handled above
+        }
+
+        JSONObject quote = json.optJSONObject("Global Quote");
+
+        if (quote == null || quote.isEmpty()) {
+            throw new IllegalStateException("Missing quote");
+        }
+
+        BigDecimal closePrice = new BigDecimal(quote.getString("05. price"));
+        Long volume = quote.optLong("06. volume");
+        LocalDate date = LocalDate.parse(quote.getString("07. latest trading day"));
+
+        return new Price(null, null, date, closePrice, volume);
+    }
+
+    private List<Price> mapHistoricalToDomain(
+            String ticker,
+            String body,
+            LocalDate from,
+            LocalDate to
+    ) {
+        try {
+            JSONObject json = new JSONObject(body);
+
+            if (json.has("Note") || json.has("Error Message")) {
+                throw new RuntimeException("AlphaVantage API error: " + body);
+            }
+
+            JSONObject timeSeries = json.getJSONObject("Time Series (Daily)");
+
+            return timeSeries.keySet().stream()
+                    .map(LocalDate::parse)
+                    .filter(date -> !date.isBefore(from) && !date.isAfter(to))
+                    .map(date -> {
+                        JSONObject daily = timeSeries.getJSONObject(date.toString());
+
+                        BigDecimal close = new BigDecimal(daily.getString("4. close"));
+                        Long volume = daily.optLong("5. volume");
+
+                        return new Price(null, null, date, close, volume);
+                    })
+                    .sorted((p1, p2) -> p1.getDate().compareTo(p2.getDate()))
+                    .toList();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse historical data", e);
+        }
+    }
+
+}
