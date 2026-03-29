@@ -1,0 +1,61 @@
+# =========================
+# Java / JVM
+# =========================
+*.class
+
+# Maven
+target/
+
+# Generated sources
+**/generated-sources/
+
+# =========================
+# IntelliJ IDEA
+# =========================
+.idea/
+*.iml
+out/
+
+# =========================
+# Eclipse
+# =========================
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+
+# =========================
+# NetBeans
+# =========================
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# =========================
+# VS Code
+# =========================
+.vscode/
+
+# =========================
+# Environment / secrets
+# =========================
+.env
+.env.*
+secrets.env
+
+# =========================
+# Logs
+# =========================
+*.log
+logs/
+
+# =========================
+# OS files
+# =========================
+.DS_Store
