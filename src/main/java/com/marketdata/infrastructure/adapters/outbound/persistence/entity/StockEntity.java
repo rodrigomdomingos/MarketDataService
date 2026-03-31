@@ -37,4 +37,7 @@ public class StockEntity {
 
     @Column(length = 2000)
     private String description;
+
+    @Column(name = "historical_data_loaded", nullable = false, columnDefinition = "boolean default false")
+    private boolean historicalDataLoaded = false;
 }

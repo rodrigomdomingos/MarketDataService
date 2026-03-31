@@ -6,7 +6,7 @@ import com.marketdata.infrastructure.adapters.outbound.persistence.mapper.PriceE
 import com.marketdata.infrastructure.adapters.outbound.persistence.repository.JpaPriceRepository;
 import com.marketdata.infrastructure.adapters.outbound.persistence.repository.JpaStockRepository;
 import com.marketdata.domain.model.Price;
-import com.marketdata.application.ports.out.PriceRepositoryPortOut;
+import com.marketdata.application.ports.out.PricePortOut;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class PriceRepositoryImpl implements PriceRepositoryPortOut {
+public class PriceRepositoryImpl implements PricePortOut {
 
     private final JpaPriceRepository jpaPriceRepository;
     private final JpaStockRepository jpaStockRepository;

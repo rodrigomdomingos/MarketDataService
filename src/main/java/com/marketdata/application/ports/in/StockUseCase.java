@@ -10,4 +10,6 @@ public interface StockUseCase {
 
     Optional<Stock> getStockByTicker(String ticker);
 
+    void saveAll(List<Stock> stocks);
+
 }

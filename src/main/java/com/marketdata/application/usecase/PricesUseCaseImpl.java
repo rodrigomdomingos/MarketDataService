@@ -5,9 +5,9 @@ import com.marketdata.domain.exception.StockNotFoundException;
 import com.marketdata.domain.model.Price;
 import com.marketdata.domain.model.Stock;
 import com.marketdata.application.ports.in.PriceUseCase;
-import com.marketdata.application.ports.out.PriceRepositoryPortOut;
-import com.marketdata.application.ports.out.StockRepositoryPortOut;
-import java.time.LocalDate;
+import com.marketdata.application.ports.out.PricePortOut;
+import com.marketdata.application.ports.out.StockPortOut;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +19,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class PricesUseCaseImpl implements PriceUseCase {
 
-    private final PriceRepositoryPortOut priceRepositoryPortOut;
-    private final StockRepositoryPortOut stockRepositoryPort;
+    private final PricePortOut pricePortOut;
+    private final StockPortOut stockRepositoryPort;
 
     @Override
     public List<Price> getPrices(String ticker, LocalDateTime from, LocalDateTime to) {
@@ -29,7 +29,7 @@ public class PricesUseCaseImpl implements PriceUseCase {
         Stock stock = stockRepositoryPort.findByTicker(ticker)
                 .orElseThrow(() -> new StockNotFoundException(ticker));
 
-        List<Price> prices = priceRepositoryPortOut.findByStockAndDateRange(
+        List<Price> prices = pricePortOut.findByStockAndDateRange(
                 stock.getTicker(), from, to
         );
 
@@ -47,7 +47,7 @@ public class PricesUseCaseImpl implements PriceUseCase {
         Stock stock = stockRepositoryPort.findByTicker(ticker)
                 .orElseThrow(() -> new StockNotFoundException(ticker));
 
-        return priceRepositoryPortOut.findLatestByStock(stock.getTicker())
+        return pricePortOut.findLatestByStock(stock.getTicker())
                 .orElseThrow(() -> new PriceNotFoundException(ticker));
     }
 }

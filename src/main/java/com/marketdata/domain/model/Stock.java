@@ -12,12 +12,13 @@ public class Stock {
     private String currency;
     private Boolean isActive;
     private String description;
+    private boolean historicalDataLoaded;
 
     public Stock(String ticker, String name) {
-        this(null, ticker, null, null, null, null, null, null);
+        this(null, ticker, null, null, null, null, null, null, false);
     }
 
-    public Stock(Long id, String ticker, String exchange, String sector, String industry, String currency, Boolean isActive, String description) {
+    public Stock(Long id, String ticker, String exchange, String sector, String industry, String currency, Boolean isActive, String description, boolean historicalDataLoaded) {
         this.id = id;
         this.ticker = ticker;
         this.exchange = exchange;
@@ -26,6 +27,7 @@ public class Stock {
         this.currency = currency;
         this.isActive = isActive;
         this.description = description;
+        this.historicalDataLoaded = historicalDataLoaded;
     }
 
     public Long getId() {
@@ -92,17 +94,25 @@ public class Stock {
         this.description = description;
     }
 
+    public boolean isHistoricalDataLoaded() {
+        return historicalDataLoaded;
+    }
+
+    public void setHistoricalDataLoaded(boolean historicalDataLoaded) {
+        this.historicalDataLoaded = historicalDataLoaded;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Stock stock = (Stock) o;
-        return Objects.equals(id, stock.id) && Objects.equals(ticker, stock.ticker) && Objects.equals(exchange, stock.exchange) && Objects.equals(sector, stock.sector) && Objects.equals(industry, stock.industry) && Objects.equals(currency, stock.currency) && Objects.equals(isActive, stock.isActive) && Objects.equals(description, stock.description);
+        return historicalDataLoaded == stock.historicalDataLoaded && Objects.equals(id, stock.id) && Objects.equals(ticker, stock.ticker) && Objects.equals(exchange, stock.exchange) && Objects.equals(sector, stock.sector) && Objects.equals(industry, stock.industry) && Objects.equals(currency, stock.currency) && Objects.equals(isActive, stock.isActive) && Objects.equals(description, stock.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ticker, exchange, sector, industry, currency, isActive, description);
+        return Objects.hash(id, ticker, exchange, sector, industry, currency, isActive, description, historicalDataLoaded);
     }
 
     @Override
@@ -116,6 +126,7 @@ public class Stock {
                 ", currency='" + currency + '\'' +
                 ", isActive=" + isActive +
                 ", description='" + description + '\'' +
+                ", historicalDataLoaded=" + historicalDataLoaded +
                 '}';
     }
 
@@ -132,7 +143,8 @@ public class Stock {
                 .industry(this.industry)
                 .currency(this.currency)
                 .isActive(this.isActive)
-                .description(this.description);
+                .description(this.description)
+                .historicalDataLoaded(this.historicalDataLoaded);
     }
 
     public static class Builder {
@@ -144,6 +156,7 @@ public class Stock {
         private String currency;
         private Boolean isActive;
         private String description;
+        private boolean historicalDataLoaded;
 
         public Builder id(Long id) {
             this.id = id;
@@ -185,8 +198,13 @@ public class Stock {
             return this;
         }
 
+        public Builder historicalDataLoaded(boolean historicalDataLoaded) {
+            this.historicalDataLoaded = historicalDataLoaded;
+            return this;
+        }
+
         public Stock build() {
-            return new Stock(id, ticker, exchange, sector, industry, currency, isActive, description);
+            return new Stock(id, ticker, exchange, sector, industry, currency, isActive, description, historicalDataLoaded);
         }
     }
 }

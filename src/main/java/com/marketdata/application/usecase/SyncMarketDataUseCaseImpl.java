@@ -2,8 +2,8 @@ package com.marketdata.application.usecase;
 
 import com.marketdata.application.ports.in.SyncMarketDataUseCase;
 import com.marketdata.application.ports.out.MarketDataProviderPortOut;
-import com.marketdata.application.ports.out.PriceRepositoryPortOut;
-import com.marketdata.application.ports.out.StockRepositoryPortOut;
+import com.marketdata.application.ports.out.PricePortOut;
+import com.marketdata.application.ports.out.StockPortOut;
 import com.marketdata.domain.exception.StockNotFoundException;
 import com.marketdata.domain.model.Price;
 import com.marketdata.domain.model.Stock;
@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,8 +20,8 @@ import java.util.Optional;
 public class SyncMarketDataUseCaseImpl implements SyncMarketDataUseCase {
 
     private final MarketDataProviderPortOut marketDataProviderPort;
-    private final PriceRepositoryPortOut priceRepositoryPort;
-    private final StockRepositoryPortOut stockRepositoryPort;
+    private final PricePortOut priceRepositoryPort;
+    private final StockPortOut stockRepositoryPort;
 
     @Override
     public void syncLatestPrice(String ticker) {
@@ -48,14 +47,13 @@ public class SyncMarketDataUseCaseImpl implements SyncMarketDataUseCase {
     }
 
     @Override
-    public void syncHistoricalPrices(String ticker, LocalDateTime from, LocalDateTime to) {
-        log.info("Syncing historical prices for {} from {} to {}", ticker, from, to);
+    public void syncHistoricalPrices(String ticker) {
+        log.info("Syncing historical prices for {}", ticker);
 
         Stock stock = stockRepositoryPort.findByTicker(ticker)
                 .orElseThrow(() -> new StockNotFoundException(ticker));
 
-        List<Price> fetchedPrices =
-                marketDataProviderPort.getHistoricalPrices(ticker, from, to);
+        List<Price> fetchedPrices = marketDataProviderPort.getHistoricalPrices(ticker);
 
         if (fetchedPrices.isEmpty()) {
             log.warn("No historical prices returned from provider for {}", ticker);
@@ -69,6 +67,9 @@ public class SyncMarketDataUseCaseImpl implements SyncMarketDataUseCase {
                 .toList();
 
         priceRepositoryPort.saveAll(enriched);
+
+        stock.setHistoricalDataLoaded(true);
+        stockRepositoryPort.save(stock);
 
         log.info("Saved {} historical prices for {}", enriched.size(), ticker);
     }

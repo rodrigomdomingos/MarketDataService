@@ -2,7 +2,6 @@ package com.marketdata.infrastructure.adapters.outbound.provider;
 
 import com.marketdata.application.ports.out.MarketDataProviderPortOut;
 import com.marketdata.domain.model.Price;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,8 +23,7 @@ import java.util.Optional;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
-public class AlphaVantageProviderAdapter implements MarketDataProviderPortOut {
+public class AlphaVantageProviderAdapter {
 
     @Value("${marketdata.provider.alpha-vantage.base-url}")
     private String baseUrl;
@@ -33,7 +31,6 @@ public class AlphaVantageProviderAdapter implements MarketDataProviderPortOut {
     @Value("${marketdata.provider.alpha-vantage.api-key}")
     private String apiKey;
 
-    @Override
     @Retryable(
             value = { Exception.class },
             maxAttempts = 3,
@@ -53,20 +50,6 @@ public class AlphaVantageProviderAdapter implements MarketDataProviderPortOut {
     public Optional<Price> recover(Exception e, String ticker) {
         log.error("All retry attempts failed for ticker {}. Returning empty.", ticker, e);
         return Optional.empty();
-    }
-
-    @Override
-    public List<Price> getHistoricalPrices(String ticker, LocalDateTime from, LocalDateTime to) {
-        log.info("Fetching historical prices for {} from {} to {}", ticker, from, to);
-
-        String formattedTicker = ticker.endsWith(".SA") ? ticker : ticker + ".SA";
-
-        String url = baseUrl +
-                "function=TIME_SERIES_DAILY&symbol=" + formattedTicker +
-                "&apikey=" + apiKey;
-
-        String body = fetchRawJson(url);
-        return mapHistoricalToDomain(ticker, body, from, to);
     }
 
     private String fetchPriceJson(String ticker) {
@@ -101,33 +84,6 @@ public class AlphaVantageProviderAdapter implements MarketDataProviderPortOut {
                 Thread.currentThread().interrupt();
             }
             throw new RuntimeException("HTTP request failed for ticker " + ticker, e);
-        }
-    }
-
-    private String fetchRawJson(String url) {
-        HttpClient client = HttpClient.newHttpClient();
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .GET()
-                .build();
-
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            String body = response.body();
-
-            if (body == null || body.isBlank()) {
-                throw new RuntimeException("Empty response from AlphaVantage");
-            }
-
-            return body;
-
-        } catch (IOException | InterruptedException e) {
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
-            throw new RuntimeException("HTTP request failed", e);
         }
     }
 

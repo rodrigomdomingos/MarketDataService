@@ -1,7 +1,7 @@
 package com.marketdata.application.usecase;
 
 import com.marketdata.domain.model.Stock;
-import com.marketdata.application.ports.out.StockRepositoryPortOut;
+import com.marketdata.application.ports.out.StockPortOut;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 class StockUseCaseImplTest {
 
     @Mock
-    private StockRepositoryPortOut stockRepositoryPort;
+    private StockPortOut stockRepositoryPort;
 
     @InjectMocks
     private StockUseCaseImpl stockService;

@@ -21,3 +21,5 @@ marketdata:
     alpha-vantage:
       base-url: https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=
       api-key: ${ALPHAVANTAGE_API_KEY}
+    brapi:
+      base-url: https://brapi.dev/api/quote/

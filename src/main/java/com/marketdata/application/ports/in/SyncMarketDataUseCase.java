@@ -6,6 +6,6 @@ public interface SyncMarketDataUseCase {
 
     void syncLatestPrice(String ticker);
 
-    void syncHistoricalPrices(String ticker, LocalDateTime from, LocalDateTime to);
+    void syncHistoricalPrices(String ticker);
 
 }
