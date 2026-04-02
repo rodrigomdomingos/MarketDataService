@@ -1,6 +1,5 @@
 package com.marketdata.infrastructure.adapters.outbound.provider;
 
-import com.marketdata.application.ports.out.MarketDataProviderPortOut;
 import com.marketdata.domain.model.Price;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
@@ -17,7 +16,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,7 +103,7 @@ public class AlphaVantageProviderAdapter {
 
         BigDecimal closePrice = new BigDecimal(quote.getString("05. price"));
         Long volume = quote.optLong("06. volume");
-        LocalDateTime date = LocalDate.parse(quote.getString("07. latest trading day")).atStartOfDay();
+        OffsetDateTime date = LocalDate.parse(quote.getString("07. latest trading day")).atStartOfDay().atOffset(ZoneOffset.UTC);
 
         return new Price(null, null, date, closePrice, volume);
     }
@@ -111,8 +111,8 @@ public class AlphaVantageProviderAdapter {
     private List<Price> mapHistoricalToDomain(
             String ticker,
             String body,
-            LocalDateTime from,
-            LocalDateTime to
+            OffsetDateTime from,
+            OffsetDateTime to
     ) {
         try {
             JSONObject json = new JSONObject(body);
@@ -124,7 +124,7 @@ public class AlphaVantageProviderAdapter {
             JSONObject timeSeries = json.getJSONObject("Time Series (Daily)");
 
             return timeSeries.keySet().stream()
-                    .map(dateStr -> LocalDate.parse(dateStr).atStartOfDay())
+                    .map(dateStr -> LocalDate.parse(dateStr).atStartOfDay().atOffset(ZoneOffset.UTC))
                     .filter(date -> !date.isBefore(from) && !date.isAfter(to))
                     .map(date -> {
                         JSONObject daily = timeSeries.getJSONObject(date.toLocalDate().toString());

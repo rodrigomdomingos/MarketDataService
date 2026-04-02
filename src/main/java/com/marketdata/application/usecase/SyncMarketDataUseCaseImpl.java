@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +31,13 @@ public class SyncMarketDataUseCaseImpl implements SyncMarketDataUseCase {
 
         Stock stock = stockRepositoryPort.findByTicker(ticker)
                 .orElseThrow(() -> new StockNotFoundException(ticker));
+
+        OffsetDateTime today = OffsetDateTime.now(ZoneOffset.UTC).withHour(0).withMinute(0).withSecond(0).withNano(0);
+        Optional<Price> priceForToday = priceRepositoryPort.findByStockIdAndDate(stock.getId(), today);
+        if (priceForToday.isPresent()) {
+            log.warn("Price for {} on {} already exists, skipping sync.", ticker, today);
+            return;
+        }
 
         Optional<Price> priceOpt = marketDataProviderPort.getLatestPrice(ticker);
 

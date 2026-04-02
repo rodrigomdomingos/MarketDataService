@@ -8,7 +8,7 @@ import com.marketdata.application.ports.in.PriceUseCase;
 import com.marketdata.application.ports.out.PricePortOut;
 import com.marketdata.application.ports.out.StockPortOut;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ public class PricesUseCaseImpl implements PriceUseCase {
     private final StockPortOut stockRepositoryPort;
 
     @Override
-    public List<Price> getPrices(String ticker, LocalDateTime from, LocalDateTime to) {
+    public List<Price> getPrices(String ticker, OffsetDateTime from, OffsetDateTime to) {
         log.info("Fetching prices for ticker: {} from {} to {}", ticker, from, to);
 
         Stock stock = stockRepositoryPort.findByTicker(ticker)

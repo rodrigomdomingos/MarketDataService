@@ -1,7 +1,7 @@
 package com.marketdata.infrastructure.adapters.inbound.web.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import lombok.Builder;
 import lombok.Value;
 
@@ -10,7 +10,7 @@ import lombok.Value;
 public class PriceResponse {
     Long id;
     Long stockId;
-    LocalDateTime date;
+    OffsetDateTime date;
     BigDecimal closePrice;
     Long volume;
 }

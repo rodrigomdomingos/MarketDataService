@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,7 +36,7 @@ public class AlphaVantageProviderAdapterTest {
     @Test
     void testGetLatestPrice_Success() {
         String ticker = "ITSA4.SA";
-        Price expectedPrice = new Price(null, null, LocalDateTime.now(), new BigDecimal("8.50"), 1000L);
+        Price expectedPrice = new Price(null, null, OffsetDateTime.now(), new BigDecimal("8.50"), 1000L);
 
         when(mockAdapter.getLatestPrice(ticker)).thenReturn(Optional.of(expectedPrice));
 

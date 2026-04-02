@@ -15,7 +15,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
@@ -89,7 +88,7 @@ public class BrapiFinancePriceProviderAdapter {
 
         BigDecimal closePrice = result.getBigDecimal("regularMarketPrice");
         long volume = result.getLong("regularMarketVolume");
-        LocalDateTime date = OffsetDateTime.parse(result.getString("regularMarketTime")).toLocalDateTime();
+        OffsetDateTime date = OffsetDateTime.parse(result.getString("regularMarketTime"));
 
         return new Price(null, null, date, closePrice, volume);
     }

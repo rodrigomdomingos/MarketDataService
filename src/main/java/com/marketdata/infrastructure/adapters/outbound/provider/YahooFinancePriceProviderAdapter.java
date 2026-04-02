@@ -13,7 +13,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,9 +76,7 @@ public class YahooFinancePriceProviderAdapter {
                     double close = closes.get(i).asDouble();
                     long volume = volumes.get(i).asLong();
 
-                    LocalDateTime date = Instant.ofEpochSecond(epoch)
-                            .atZone(ZoneOffset.UTC)
-                            .toLocalDateTime();
+                    OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(epoch), ZoneOffset.UTC);
 
                     prices.add(new Price(
                             null,

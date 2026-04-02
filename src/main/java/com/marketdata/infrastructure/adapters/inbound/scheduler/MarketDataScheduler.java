@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -31,13 +32,15 @@ public class MarketDataScheduler {
 
     private final RateLimiter rateLimiter = RateLimiter.create(30.0 / 60.0);
 
+    private final ZoneId brazilZoneId = ZoneId.of("America/Sao_Paulo");
+
     @EventListener(ApplicationReadyEvent.class)
     public void runAtStartup() {
         log.info("Running Market Data sync at startup");
         runAllJobs();
     }
 
-    @Scheduled(cron = "0 0 19 * * *")
+    @Scheduled(cron = "0 0 19 * * *", zone = "America/Sao_Paulo")
     public void runAllJobs() {
         log.info("Starting Market Data scheduled jobs");
 
@@ -67,7 +70,7 @@ public class MarketDataScheduler {
     private void syncLatestPrices(List<Stock> stocks) {
         log.info("Starting latest prices sync");
 
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(brazilZoneId);
 
         processAllStocks("latest prices", stocks, stock -> {
             Optional<Price> latestPriceOpt = pricePortOut.findLatestByStock(stock.getTicker());

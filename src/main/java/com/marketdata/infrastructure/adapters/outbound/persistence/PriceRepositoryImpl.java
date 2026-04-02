@@ -10,7 +10,7 @@ import com.marketdata.application.ports.out.PricePortOut;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +23,7 @@ public class PriceRepositoryImpl implements PricePortOut {
     private final PriceEntityMapper priceEntityMapper;
 
     @Override
-    public List<Price> findByStockAndDateRange(String ticker, LocalDateTime from, LocalDateTime to) {
+    public List<Price> findByStockAndDateRange(String ticker, OffsetDateTime from, OffsetDateTime to) {
         return jpaPriceRepository
                 .findByStock_TickerIgnoreCaseAndDateBetweenOrderByDateAsc(ticker, from, to)
                 .stream()
@@ -59,6 +59,12 @@ public class PriceRepositoryImpl implements PricePortOut {
 
         PriceEntity entity = toEntityWithStock(price);
         jpaPriceRepository.save(entity);
+    }
+
+    @Override
+    public Optional<Price> findByStockIdAndDate(Long stockId, OffsetDateTime date) {
+        return jpaPriceRepository.findByStockIdAndDate(stockId, date)
+                .map(priceEntityMapper::toDomain);
     }
 
     private PriceEntity toEntityWithStock(Price price) {
