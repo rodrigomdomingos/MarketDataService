@@ -26,6 +26,9 @@ public class BrapiFinancePriceProviderAdapter {
     @Value("${marketdata.provider.brapi.base-url}")
     private String baseUrl;
 
+    @Value("${marketdata.provider.brapi.api-key}")
+    private String apiKey;
+
     @Retryable(
             retryFor = { Exception.class },
             backoff = @Backoff(delay = 5000)
@@ -48,7 +51,7 @@ public class BrapiFinancePriceProviderAdapter {
 
     private String fetchPriceJson(String ticker) {
         String formattedTicker = ticker.endsWith(".SA") ? ticker.replace(".SA", "") : ticker;
-        String url = baseUrl + formattedTicker + "?fundamental=true";
+        String url = baseUrl + formattedTicker + "?fundamental=true&token=" + apiKey;
 
         try (HttpClient client = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder()

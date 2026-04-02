@@ -23,3 +23,4 @@ marketdata:
       api-key: ${ALPHAVANTAGE_API_KEY}
     brapi:
       base-url: https://brapi.dev/api/quote/
+      api-key: ${BRAPI_API_KEY}
