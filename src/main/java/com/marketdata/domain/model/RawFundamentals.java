@@ -24,6 +24,8 @@ public class RawFundamentals {
     private Double revenueGrowth;
     private Double earningsGrowth;
     private String source;
+    private Double pegRatio;
+    private Double freeCashFlow;
 
     public RawFundamentals(
             Long stockId,
@@ -45,7 +47,9 @@ public class RawFundamentals {
             Double operatingCashflow,
             Double revenueGrowth,
             Double earningsGrowth,
-            String source
+            String source,
+            Double pegRatio,
+            Double freeCashFlow
     ) {
         this.stockId = stockId;
         this.referenceDate = referenceDate;
@@ -67,6 +71,8 @@ public class RawFundamentals {
         this.revenueGrowth = revenueGrowth;
         this.earningsGrowth = earningsGrowth;
         this.source = source;
+        this.pegRatio = pegRatio;
+        this.freeCashFlow = freeCashFlow;
     }
 
     public Long getStockId() {
@@ -229,6 +235,22 @@ public class RawFundamentals {
         this.source = source;
     }
 
+    public Double getPegRatio() {
+        return pegRatio;
+    }
+
+    public void setPegRatio(Double pegRatio) {
+        this.pegRatio = pegRatio;
+    }
+
+    public Double getFreeCashFlow() {
+        return freeCashFlow;
+    }
+
+    public void setFreeCashFlow(Double freeCashFlow) {
+        this.freeCashFlow = freeCashFlow;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -253,7 +275,9 @@ public class RawFundamentals {
                 && Objects.equals(operatingCashflow, that.operatingCashflow)
                 && Objects.equals(revenueGrowth, that.revenueGrowth)
                 && Objects.equals(earningsGrowth, that.earningsGrowth)
-                && Objects.equals(source, that.source);
+                && Objects.equals(source, that.source)
+                && Objects.equals(pegRatio, that.pegRatio)
+                && Objects.equals(freeCashFlow, that.freeCashFlow);
     }
 
     @Override
@@ -278,7 +302,9 @@ public class RawFundamentals {
                 operatingCashflow,
                 revenueGrowth,
                 earningsGrowth,
-                source
+                source,
+                pegRatio,
+                freeCashFlow
         );
     }
 
@@ -305,6 +331,8 @@ public class RawFundamentals {
                 ", revenueGrowth=" + revenueGrowth +
                 ", earningsGrowth=" + earningsGrowth +
                 ", source='" + source + '\'' +
+                ", pegRatio=" + pegRatio +
+                ", freeCashFlow=" + freeCashFlow +
                 '}';
     }
 }

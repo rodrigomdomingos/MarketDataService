@@ -179,6 +179,9 @@ public class YahooFinanceFundamentalsClient {
         Double operatingCashflow = readRaw(financialData, "operatingCashflow");
         Double revenueGrowth = readRaw(financialData, "revenueGrowth");
         Double earningsGrowth = readRaw(financialData, "earningsGrowth");
+        
+        Double pegRatio = readRaw(defaultKeyStatistics, "pegRatio");
+        Double freeCashFlow = readRaw(financialData, "freeCashflow");
 
         return new RawFundamentals(
                 null,
@@ -200,7 +203,9 @@ public class YahooFinanceFundamentalsClient {
                 operatingCashflow,
                 revenueGrowth,
                 earningsGrowth,
-                "YAHOO_FINANCE"
+                "YAHOO_FINANCE",
+                pegRatio,
+                freeCashFlow
         );
     }
 
@@ -258,7 +263,9 @@ public class YahooFinanceFundamentalsClient {
                 null,
                 null,
                 null,
-                "YAHOO_FINANCE"
+                "YAHOO_FINANCE",
+                null,
+                null
         );
     }
 

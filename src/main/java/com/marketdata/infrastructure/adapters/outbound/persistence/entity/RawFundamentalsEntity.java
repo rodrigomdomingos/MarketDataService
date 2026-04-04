@@ -53,6 +53,12 @@ public class RawFundamentalsEntity {
     private Double revenueGrowth;
     private Double earningsGrowth;
 
+    @Column(name = "peg_ratio")
+    private Double pegRatio;
+
+    @Column(name = "free_cash_flow")
+    private Double freeCashFlow;
+
     @Column(nullable = false, length = 50)
     private String source;
 }
