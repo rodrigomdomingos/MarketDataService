@@ -25,7 +25,7 @@ public class PriceRepositoryImpl implements PricePortOut {
     @Override
     public List<Price> findByStockAndDateRange(String ticker, OffsetDateTime from, OffsetDateTime to) {
         return jpaPriceRepository
-                .findByStock_TickerIgnoreCaseAndDateBetweenOrderByDateAsc(ticker, from, to)
+                .findByStock_TickerIgnoreCaseAndSnapshotAtBetweenOrderBySnapshotAtAsc(ticker, from, to)
                 .stream()
                 .map(priceEntityMapper::toDomain)
                 .toList();
@@ -34,7 +34,7 @@ public class PriceRepositoryImpl implements PricePortOut {
     @Override
     public Optional<Price> findLatestByStock(String ticker) {
         return jpaPriceRepository
-                .findFirstByStock_TickerIgnoreCaseOrderByDateDesc(ticker)
+                .findFirstByStock_TickerIgnoreCaseOrderBySnapshotAtDesc(ticker)
                 .map(priceEntityMapper::toDomain);
     }
 
@@ -63,7 +63,7 @@ public class PriceRepositoryImpl implements PricePortOut {
 
     @Override
     public Optional<Price> findByStockIdAndDate(Long stockId, OffsetDateTime date) {
-        return jpaPriceRepository.findByStockIdAndDate(stockId, date)
+        return jpaPriceRepository.findByStockIdAndSnapshotAt(stockId, date)
                 .map(priceEntityMapper::toDomain);
     }
 

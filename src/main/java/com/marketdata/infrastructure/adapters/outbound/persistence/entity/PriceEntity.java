@@ -33,8 +33,8 @@ public class PriceEntity {
     @JoinColumn(name = "stock_id", nullable = false)
     private StockEntity stock;
 
-    @Column(nullable = false)
-    private OffsetDateTime date;
+    @Column(name = "snapshot_at", columnDefinition = "TIMESTAMP WITH TIME ZONE", nullable = false)
+    private OffsetDateTime snapshotAt;
 
     @Column(nullable = false, precision = 19, scale = 4)
     private BigDecimal closePrice;

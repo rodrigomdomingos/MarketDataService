@@ -7,13 +7,13 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface JpaPriceRepository extends JpaRepository<PriceEntity, Long> {
-    List<PriceEntity> findByStock_TickerIgnoreCaseAndDateBetweenOrderByDateAsc(
+    List<PriceEntity> findByStock_TickerIgnoreCaseAndSnapshotAtBetweenOrderBySnapshotAtAsc(
             String ticker,
             OffsetDateTime from,
             OffsetDateTime to
     );
 
-    Optional<PriceEntity> findFirstByStock_TickerIgnoreCaseOrderByDateDesc(String ticker);
+    Optional<PriceEntity> findFirstByStock_TickerIgnoreCaseOrderBySnapshotAtDesc(String ticker);
 
-    Optional<PriceEntity> findByStockIdAndDate(Long stockId, OffsetDateTime date);
+    Optional<PriceEntity> findByStockIdAndSnapshotAt(Long stockId, OffsetDateTime snapshotAt);
 }
