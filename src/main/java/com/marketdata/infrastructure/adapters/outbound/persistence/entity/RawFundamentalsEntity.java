@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,7 +33,7 @@ public class RawFundamentalsEntity {
     private StockEntity stock;
 
     @Column(name = "reference_date", nullable = false)
-    private LocalDate referenceDate;
+    private OffsetDateTime referenceDate;
 
     private Double price;
     private Double marketCap;

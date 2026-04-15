@@ -1,11 +1,11 @@
 package com.marketdata.domain.model;
 
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 public class RawFundamentals {
     private Long stockId;
-    private LocalDate referenceDate;
+    private OffsetDateTime referenceDate;
     private Double price;
     private Double marketCap;
     private Double pe;
@@ -29,7 +29,7 @@ public class RawFundamentals {
 
     public RawFundamentals(
             Long stockId,
-            LocalDate referenceDate,
+            OffsetDateTime referenceDate,
             Double price,
             Double marketCap,
             Double pe,
@@ -83,11 +83,11 @@ public class RawFundamentals {
         this.stockId = stockId;
     }
 
-    public LocalDate getReferenceDate() {
+    public OffsetDateTime getReferenceDate() {
         return referenceDate;
     }
 
-    public void setReferenceDate(LocalDate referenceDate) {
+    public void setReferenceDate(OffsetDateTime referenceDate) {
         this.referenceDate = referenceDate;
     }
 

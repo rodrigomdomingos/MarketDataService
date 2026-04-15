@@ -7,7 +7,7 @@ import com.marketdata.domain.exception.StockNotFoundException;
 import com.marketdata.domain.model.RawFundamentals;
 import com.marketdata.domain.model.Stock;
 import com.marketdata.infrastructure.adapters.outbound.provider.YahooFinanceFundamentalsClient;
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ public class RawFundamentalsUseCaseImpl implements RawFundamentalsUseCase {
 
         RawFundamentals rawFundamentals = yahooFinanceFundamentalsClient.fetchFundamentals(ticker);
         rawFundamentals.setStockId(stock.getId());
-        rawFundamentals.setReferenceDate(LocalDate.now(ZoneOffset.UTC));
+        rawFundamentals.setReferenceDate(OffsetDateTime.now(ZoneOffset.UTC));
         rawFundamentals.setSource(SOURCE_YAHOO);
 
         rawFundamentalsPortOut.save(rawFundamentals);

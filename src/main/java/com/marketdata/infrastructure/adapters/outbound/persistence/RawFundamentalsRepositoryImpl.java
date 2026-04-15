@@ -7,7 +7,7 @@ import com.marketdata.infrastructure.adapters.outbound.persistence.entity.StockE
 import com.marketdata.infrastructure.adapters.outbound.persistence.mapper.RawFundamentalsEntityMapper;
 import com.marketdata.infrastructure.adapters.outbound.persistence.repository.JpaRawFundamentalsRepository;
 import com.marketdata.infrastructure.adapters.outbound.persistence.repository.JpaStockRepository;
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -43,7 +43,7 @@ public class RawFundamentalsRepositoryImpl implements RawFundamentalsPortOut {
     }
 
     @Override
-    public Optional<RawFundamentals> findByStockIdAndReferenceDate(Long stockId, LocalDate referenceDate) {
+    public Optional<RawFundamentals> findByStockIdAndReferenceDate(Long stockId, OffsetDateTime referenceDate) {
         return jpaRawFundamentalsRepository.findByStockIdAndReferenceDate(stockId, referenceDate)
                 .map(rawFundamentalsEntityMapper::toDomain);
     }
