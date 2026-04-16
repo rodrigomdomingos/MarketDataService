@@ -4,6 +4,7 @@ import com.marketdata.application.ports.in.SyncMarketDataUseCase;
 import com.marketdata.application.ports.out.MarketDataProviderPortOut;
 import com.marketdata.application.ports.out.PricePortOut;
 import com.marketdata.application.ports.out.StockPortOut;
+import com.marketdata.application.service.MarketDataOrchestrator;
 import com.marketdata.domain.exception.StockNotFoundException;
 import com.marketdata.domain.model.Price;
 import com.marketdata.domain.model.Stock;
@@ -24,6 +25,7 @@ public class SyncMarketDataUseCaseImpl implements SyncMarketDataUseCase {
     private final MarketDataProviderPortOut marketDataProviderPort;
     private final PricePortOut priceRepositoryPort;
     private final StockPortOut stockRepositoryPort;
+    private final MarketDataOrchestrator marketDataOrchestrator;
 
     @Override
     public void syncLatestPrice(String ticker) {
@@ -50,7 +52,7 @@ public class SyncMarketDataUseCaseImpl implements SyncMarketDataUseCase {
                 .stockId(stock.getId())
                 .build();
 
-        priceRepositoryPort.save(enriched);
+        marketDataOrchestrator.saveLatestPrice(enriched);
 
         log.info("Saved latest price for {}", ticker);
     }
@@ -75,10 +77,7 @@ public class SyncMarketDataUseCaseImpl implements SyncMarketDataUseCase {
                         .build())
                 .toList();
 
-        priceRepositoryPort.saveAll(enriched);
-
-        stock.setHistoricalDataLoaded(true);
-        stockRepositoryPort.save(stock);
+        marketDataOrchestrator.saveHistoricalPrices(stock, enriched);
 
         log.info("Saved {} historical prices for {}", enriched.size(), ticker);
     }

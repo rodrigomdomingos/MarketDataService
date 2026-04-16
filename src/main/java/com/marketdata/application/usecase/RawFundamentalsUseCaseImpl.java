@@ -1,8 +1,8 @@
 package com.marketdata.application.usecase;
 
 import com.marketdata.application.ports.in.RawFundamentalsUseCase;
-import com.marketdata.application.ports.out.RawFundamentalsPortOut;
 import com.marketdata.application.ports.out.StockPortOut;
+import com.marketdata.application.service.MarketDataOrchestrator;
 import com.marketdata.domain.exception.StockNotFoundException;
 import com.marketdata.domain.model.RawFundamentals;
 import com.marketdata.domain.model.Stock;
@@ -22,7 +22,7 @@ public class RawFundamentalsUseCaseImpl implements RawFundamentalsUseCase {
 
     private final YahooFinanceFundamentalsClient yahooFinanceFundamentalsClient;
     private final StockPortOut stockRepositoryPort;
-    private final RawFundamentalsPortOut rawFundamentalsPortOut;
+    private final MarketDataOrchestrator marketDataOrchestrator;
 
     @Override
     public void syncRawFundamentals(String ticker) {
@@ -36,7 +36,7 @@ public class RawFundamentalsUseCaseImpl implements RawFundamentalsUseCase {
         rawFundamentals.setReferenceDate(OffsetDateTime.now(ZoneOffset.UTC));
         rawFundamentals.setSource(SOURCE_YAHOO);
 
-        rawFundamentalsPortOut.save(rawFundamentals);
+        marketDataOrchestrator.saveRawFundamentals(rawFundamentals);
 
         log.info("Saved raw fundamentals for ticker: {}", ticker);
     }
